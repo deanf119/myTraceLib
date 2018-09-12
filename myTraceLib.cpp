@@ -1,8 +1,14 @@
-#define
+
 
 void trace_start(char* filename){
-
+  ofstream file;
+  file.open ("filename.txt");
+  file << "[\n";
+  file.close();
+  return 0;
 }
+
+
 void trace_event_start(char* name, char* categories, char* arguments){
 
 }
