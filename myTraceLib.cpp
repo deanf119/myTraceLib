@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include <string.h>
+#include <string>
 #include <chrono>
+#include <sstream>
 using namespace std;
 
 void trace_start(char* filename);
@@ -14,22 +15,30 @@ void trace_counter(char* name, char* key, char* value);
 void trace_flush();
 void trace_end();
 
+
 ofstream file;
 auto start = std::chrono::high_resolution_clock::now();
+
+string line[1000];
+int linecounter= 0;
+int eventcounter=0;
+//string pid[1000];
+
 
 int main(){
 
     trace_start("greeting");
 
     trace_event_start("Task 1", "Task 1", "Task 1");
-    trace_event_start("yolo1", "yolo1", "yolo1");
-    trace_event_start("yolo2", "yolo2", "yolo2");
-    trace_event_start("yolo3", "yolo3", "yolo3");
-    trace_event_end("yolo");
-    trace_event_end("yolo");
-    trace_event_end("yolo");
-    trace_event_end("yolo");
+    trace_event_start("Task 2", "Task 2", "Task 2");
+    trace_event_start("Task 3", "Task 3", "Task 3");
+    trace_event_start("Task 4", "Task 4", "Task 4");
+    trace_event_end("Task 1");
+    trace_event_end("Task 2");
+    trace_event_end("Task 3");
+    trace_event_end("Task 4");
 
+    trace_flush();
     trace_end();
 
     return 0;
@@ -43,26 +52,54 @@ void trace_start(char* filename){
 
 void trace_event_start(char* name, char* categories, char* arguments){
     auto finish = std::chrono::high_resolution_clock::now();
-    int BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  file << " {\"name\" : \"" << name << "\","
-       << " \"cat\" : \"" << categories << "\","
-       << " \"pid\" : \"" << "1" << "\","
-       << " \"tid\" : \"" << "1" << "\","
-       << " \"ph\" : \"" << "B" << "\","
-       << " \"ts\" : \"" << (BeginTime/1000) << "\"},"
-       << "\n";
+    auto BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
+    auto thetimeb= BeginTime/1000;
+    if (linecounter== 1000)
+    {
+        trace_flush();
+    }
+    else{
+    eventcounter=eventcounter+1;
+    ostringstream oss;
+    oss << "{ \"name\" : \""<< name << "\", \"cat\" : \"" <<categories<< "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"B\", \"ts\" : \""<<thetimeb<<"\" },\n";
+    string var = oss.str();
+    line[linecounter]= var;
+    linecounter= linecounter +1;
+    cout<< "The value of the linecounter is " <<linecounter<<endl;
+     }
 }
 
 
 
 void trace_event_end(char* arguments){
     auto finish = std::chrono::high_resolution_clock::now();
-    int EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  file << " {\"pid\" : \"" << "1" << "\","
-       << " \"tid\" : \"" << "1" << "\","
-       << " \"ph\" : \"" << "E" << "\","
-       << " \"ts\" : \"" << (EndTime/1000) << "\"},"
-       << "\n";
+    auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
+    auto thetimee= EndTime/1000;
+    if (linecounter== 1000)
+    {
+        trace_flush();
+    }
+    else{
+   eventcounter=eventcounter-1;
+               if (eventcounter== 0)
+                    {
+                        ostringstream oss;
+                        oss <<"{ \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" }\n";
+                        string var = oss.str();
+                        line[linecounter]=var;
+                        linecounter= linecounter +1;
+                        cout<< "The value of the linecounter is " <<linecounter<<endl;
+                    }
+                else
+                    {
+                        ostringstream oss;
+                        oss <<"{ \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" },\n";
+                        string var = oss.str();
+                        line[linecounter]=var;
+                        linecounter= linecounter +1;
+                        cout<< "The value of the linecounter is " <<linecounter<<endl;
+                    }
+     }
 }
 void trace_instant_global(char* name){
 
@@ -78,8 +115,13 @@ void trace_counter(char* name, char* key, char* value){
 }
 void trace_flush(){
 
+    for (int i=0; i<1000;i++)
+    {
+        file << line[i];
+    }
+
 }
 void trace_end(){
-  file << "\n ]";
+  file << "]";
   file.close();
 }
