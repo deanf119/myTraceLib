@@ -119,7 +119,14 @@ void trace_flush(){
     {
         file << line[i];
     }
-
+    //reset the string array to be empty ""
+    for (int i=0; i<1000;i++)
+    {
+       line[i]="";
+    }
+    // reset the linecounter to zero so that now we can start counting the next 1000 lines
+    linecounter= 0;
+    cout<< "Flush was just called, the value of linecounter is reset to " << linecounter<<endl;
 }
 void trace_end(){
   file << "]";
