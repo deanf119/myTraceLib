@@ -3,6 +3,7 @@
 #include <string>
 #include <chrono>
 #include <sstream>
+#include <sys/types.h>
 using namespace std;
 
 void trace_start(char* filename);
@@ -86,7 +87,7 @@ void trace_event_end(char* arguments){
     eventcounter=eventcounter-1;
     if (eventcounter== 0){
         ostringstream oss;
-        oss <<"{ \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" }\n";
+        oss <<"{ \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" }\n";
         string var = oss.str();
         line[linecounter]=var;
         linecounter= linecounter +1;
@@ -94,7 +95,7 @@ void trace_event_end(char* arguments){
       }
     else{
         ostringstream oss;
-        oss <<"{ \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" },\n";
+        oss <<"{ \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"E\", \"ts\" : \""<< thetimee << "\" },\n";
         string var = oss.str();
         line[linecounter]=var;
         linecounter= linecounter +1;
@@ -105,30 +106,27 @@ void trace_event_end(char* arguments){
 
 
 void trace_instant_global(char* name){
-    auto finish = std::chrono::high_resolution_clock::now();
-    auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-    auto thetimei= EndTime/1000;
-    if (linecounter== 10000)
-    {
-        trace_flush();
-    }
-    else{
-  
-                        ostringstream oss;
-                        oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
-                        string var = oss.str();
-                        line[linecounter]=var;
-                        linecounter= linecounter +1;
-                        cout<< "The value of the linecounter is " <<linecounter<<endl;
-
-                        /*ostringstream oss;
-                        oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" }\n";
-                        string var = oss.str();
-                        line[linecounter]=var;
-                        linecounter= linecounter +1;
-                        cout<< "The value of the linecounter is " <<linecounter<<endl; */
-                    
-     }
+  auto finish = std::chrono::high_resolution_clock::now();
+  auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
+  auto thetimei= EndTime/1000;
+  if (linecounter== 10000)
+  {
+    trace_flush();
+  }
+  else{
+    ostringstream oss;
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
+    string var = oss.str();
+    line[linecounter]=var;
+    linecounter= linecounter +1;
+    cout<< "The value of the linecounter is " <<linecounte
+    /*ostringstream oss;
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
+    string var = oss.str();
+    line[linecounter]=var;
+    linecounter= linecounter +1;
+    cout<< "The value of the linecounter is " <<linecounter<<endl; */            
+  }
 }
 
 
@@ -142,14 +140,16 @@ void trace_object_new(char* name, void* obj_pointer){
   else{
     eventcounter=eventcounter+1;
     ostringstream oss;
-    oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"N\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<<thetimeN<<"\" },\n";
+    oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"N\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<<thetimeN<<"\" },\n";
     string var = oss.str();
     line[linecounter]= var;
     linecounter= linecounter +1;
     cout<< "The value of the linecounter is " <<linecounter<<endl;
   }
 }
-
+/**
+ * oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
+*/
 
 void trace_object_gone(char* name, void* obj_pointer){
   auto finish = std::chrono::high_resolution_clock::now();
@@ -163,7 +163,7 @@ void trace_object_gone(char* name, void* obj_pointer){
     eventcounter=eventcounter-1;
     if (eventcounter== 0){
         ostringstream oss;
-        oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
+        oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
         string var = oss.str();
         line[linecounter]=var;
         linecounter= linecounter +1;
@@ -171,7 +171,7 @@ void trace_object_gone(char* name, void* obj_pointer){
       }
     else{
         ostringstream oss;
-        oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" },\n";
+        oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" },\n";
         string var = oss.str();
         line[linecounter]=var;
         linecounter= linecounter +1;
@@ -182,7 +182,21 @@ void trace_object_gone(char* name, void* obj_pointer){
 
 
 void trace_counter(char* name, char* key, char* value){
-
+  auto finish = std::chrono::high_resolution_clock::now();
+  auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
+  auto thetimeC= EndTime/1000;
+  if (linecounter== 10000)
+  {
+    trace_flush();
+  }
+  else{
+    ostringstream oss;
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
+    string var = oss.str();
+    line[linecounter]=var;
+    linecounter= linecounter +1;
+    cout<< "The value of the linecounter is " <<linecounter<<endl;           
+  }
 }
 
 
