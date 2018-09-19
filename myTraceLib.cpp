@@ -191,7 +191,7 @@ void trace_counter(char* name, char* key, char* value){
   }
   else{
     ostringstream oss;
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimei <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
@@ -215,6 +215,8 @@ void trace_flush(){
     linecounter= 0;
     cout<< "Flush was just called, the value of linecounter is reset to " << linecounter<<endl;
 }
+
+
 void trace_end(){
   trace_flush();
   file << "]";
