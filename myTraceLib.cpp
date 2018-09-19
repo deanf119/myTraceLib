@@ -100,7 +100,7 @@ void trace_event_end(char* arguments){
                         cout<< "The value of the linecounter is " <<linecounter<<endl;
                     }
      }
-     //testing
+     //testing bro
 }
 void trace_instant_global(char* name){
 
