@@ -1,9 +1,17 @@
+/**
+ * File: myTraceLib.cpp
+ * Authors: Dean Fernandes and Sheel Soneji 
+ * Last Update: September 20th, 2018
+ * Functionality: To check the trace time for individual processes and threads for another function.
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <chrono>
 #include <sstream>
 #include <sys/types.h>
+#include <unistd.h>
 using namespace std;
 
 void trace_start(char* filename);
@@ -12,9 +20,12 @@ void trace_event_end(char* arguments);
 void trace_instant_global(char* name);
 void trace_object_new(char* name, void* obj_pointer);
 void trace_object_gone(char* name, void* obj_pointer);
+void trace_object_snap(char* name, void* obj_pointer, void* snap_dump);
 void trace_counter(char* name, char* key, char* value);
 void trace_flush();
 void trace_end();
+
+
 
 
 ofstream file;
@@ -31,30 +42,40 @@ int main(){
     trace_start("greeting");
 
     trace_object_new("TaskObject", NULL);
+    trace_instant_global("Task_Instant");
+    trace_counter("TaskCounter", "cat" , "10");
     trace_event_start("Task 1", "Task 1", "Task 1");
     trace_event_start("Task 2", "Task 2", "Task 2");
     trace_event_start("Task 3", "Task 3", "Task 3");
     trace_event_start("Task 4", "Task 4", "Task 4");
-    trace_instant_global("Task_Instant");
+    //trace_object_snap("TaskObject", NULL, NULL); --------> dont test, not working
     trace_event_end("Task 1");
     trace_event_end("Task 2");
     trace_event_end("Task 3");
     trace_event_end("Task 4");
     trace_object_gone("TaskObject", NULL);
 
-    trace_flush();
+    //trace_flush();
     trace_end();
 
     return 0;
 }
 
 
+/**
+ * Function: trace_start
+ * Arguments: filename of the trace output
+*/
 void trace_start(char* filename){
   file.open (filename, ios::out|ios::app);
   file << "[ \n";
 }
 
 
+/**
+ * Function: trace_event_start
+ * Arguments: name, category and extra arguments of a task
+*/
 void trace_event_start(char* name, char* categories, char* arguments){
     auto finish = std::chrono::high_resolution_clock::now();
     auto BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
@@ -66,7 +87,7 @@ void trace_event_start(char* name, char* categories, char* arguments){
     else{
       eventcounter=eventcounter+1;
       ostringstream oss;
-      oss << "{ \"name\" : \""<< name << "\", \"cat\" : \"" <<categories<< "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"B\", \"ts\" : \""<<thetimeb<<"\" },\n";
+      oss << "{ \"name\" : \""<< name << "\", \"cat\" : \"" <<categories<< "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"B\", \"ts\" : \""<<thetimeb<<"\" },\n";
       string var = oss.str();
       line[linecounter]= var;
       linecounter= linecounter +1;
@@ -75,6 +96,10 @@ void trace_event_start(char* name, char* categories, char* arguments){
 }
 
 
+/**
+ * Function: trace_event_end
+ * Arguments: extra arguments of a task
+*/
 void trace_event_end(char* arguments){
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
@@ -104,32 +129,32 @@ void trace_event_end(char* arguments){
   }
 }
 
-
+/**
+ * Function: trace_instant_global
+ * Arguments: name of task
+*/
 void trace_instant_global(char* name){
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  auto thetimei= EndTime/1000;
+  auto thetimeI= EndTime/1000;
   if (linecounter== 10000)
   {
     trace_flush();
   }
   else{
     ostringstream oss;
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimeI<<"\" },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
-    cout<< "The value of the linecounter is " <<linecounte
-    /*ostringstream oss;
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
-    string var = oss.str();
-    line[linecounter]=var;
-    linecounter= linecounter +1;
-    cout<< "The value of the linecounter is " <<linecounter<<endl; */            
+    cout<< "The value of the linecounter is " <<linecounter<<endl;         
   }
 }
 
-
+/**
+ * Function: trace_object_new
+ * Arguments: name of object and pointer to object
+*/
 void trace_object_new(char* name, void* obj_pointer){
   auto finish = std::chrono::high_resolution_clock::now();
   auto BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
@@ -147,10 +172,11 @@ void trace_object_new(char* name, void* obj_pointer){
     cout<< "The value of the linecounter is " <<linecounter<<endl;
   }
 }
-/**
- * oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"1\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
-*/
 
+/**
+ * Function: trace_object_gone
+ * Arguments: name of object and pointer to object
+*/
 void trace_object_gone(char* name, void* obj_pointer){
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
@@ -181,6 +207,32 @@ void trace_object_gone(char* name, void* obj_pointer){
 }
 
 
+/**
+ * Function: trace_object_snap
+ * Arguments: name of object, pointer to object and pointer to future dump file (Type of argument yet to be determined)
+*/
+void trace_object_snap(char* name, void* obj_pointer, void* snap_dump){
+  auto finish = std::chrono::high_resolution_clock::now();
+  auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
+  auto thetimeC= EndTime/1000;
+  if (linecounter== 10000)
+  {
+    trace_flush();
+  }
+  else{
+    ostringstream oss;
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"O\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"snapshot\": {\"" << snap_dump << "\"} },\n";
+    string var = oss.str();
+    line[linecounter]=var;
+    linecounter= linecounter +1;
+    cout<< "The value of the linecounter is " <<linecounter<<endl;           
+  }
+}
+
+/**
+ * Function: trace_counter
+ * Arguments: name of object, key and value of arguments.
+*/
 void trace_counter(char* name, char* key, char* value){
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
@@ -191,7 +243,7 @@ void trace_counter(char* name, char* key, char* value){
   }
   else{
     ostringstream oss;
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimei <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
@@ -199,7 +251,10 @@ void trace_counter(char* name, char* key, char* value){
   }
 }
 
-
+/**
+ * Function: trace_flush
+ * Arguments: none
+*/
 void trace_flush(){
 
     for (int i=0; i<10000;i++)
@@ -216,9 +271,17 @@ void trace_flush(){
     cout<< "Flush was just called, the value of linecounter is reset to " << linecounter<<endl;
 }
 
-
+/**
+ * Function: trace_end
+ * Arguments: none
+*/
 void trace_end(){
   trace_flush();
   file << "]";
   file.close();
 }
+
+
+
+
+
