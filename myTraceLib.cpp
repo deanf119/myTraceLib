@@ -1,6 +1,6 @@
 /**
  * File: myTraceLib.cpp
- * Authors: Dean Fernandes and Sheel Soneji 
+ * Authors: Dean Fernandes and Sheel Soneji
  * Last Update: September 20th, 2018
  * Functionality: To check the trace time for individual processes and threads for another function.
 */
@@ -29,7 +29,7 @@ void trace_end();
 
 
 ofstream file;
-//auto start = std::chrono::high_resolution_clock::now();
+
 std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 
 string line[10000];
@@ -56,7 +56,6 @@ int main(){
     trace_event_end("Task 4");
     trace_object_gone("TaskObject", NULL);
 
-    //trace_flush();
     trace_end();
 
     return 0;
@@ -78,10 +77,7 @@ void trace_start(char* filename){
  * Arguments: name, category and extra arguments of a task
 */
 void trace_event_start(char* name, char* categories, char* arguments){
-    //auto finish = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-    //auto BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-    //auto thetimeb= BeginTime/1000;
     long int thetimeb = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     if (linecounter== 10000)
     {
@@ -90,11 +86,7 @@ void trace_event_start(char* name, char* categories, char* arguments){
     else{
       eventcounter=eventcounter+1;
       ostringstream oss;
-<<<<<<< HEAD
       oss << "{ \"name\" : \""<< name << "\", \"cat\" : \"" <<categories<< "\", \"pid\" : \""<<getpid()<<"\", \"tid\" : \"1\", \"ph\" : \"B\", \"ts\" : \""<<thetimeb<<"\" },\n";
-=======
-      oss << "{ \"name\" : \""<< name << "\", \"cat\" : \"" <<categories<< "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"B\", \"ts\" : \""<<thetimeb<<"\" },\n";
->>>>>>> f7ab48790d28160e560b388957c53e69e59240b4
       string var = oss.str();
       line[linecounter]= var;
       linecounter= linecounter +1;
@@ -108,10 +100,7 @@ void trace_event_start(char* name, char* categories, char* arguments){
  * Arguments: extra arguments of a task
 */
 void trace_event_end(char* arguments){
-  //auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  //auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  //auto thetimee= EndTime/1000;
   long int thetimee = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
   if (linecounter== 10000)
   {
@@ -143,24 +132,17 @@ void trace_event_end(char* arguments){
  * Arguments: name of task
 */
 void trace_instant_global(char* name){
-<<<<<<< HEAD
-  //auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  //auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  //auto thetimei= EndTime/1000;
   long int thetimei = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-=======
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
   auto thetimeI= EndTime/1000;
->>>>>>> f7ab48790d28160e560b388957c53e69e59240b4
   if (linecounter== 10000)
   {
     trace_flush();
   }
   else{
     ostringstream oss;
-<<<<<<< HEAD
     oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid()<< "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimei<<"\" },\n";
     string var = oss.str();
     line[linecounter]=var;
@@ -171,14 +153,13 @@ void trace_instant_global(char* name){
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
-    cout<< "The value of the linecounter is " <<linecounter<<endl; */
-=======
+    cout<< "The value of the linecounter is " <<linecounter<<endl;
     oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"i\", \"s\" : \"g\", \"ts\" : \""<<thetimeI<<"\" },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
-    cout<< "The value of the linecounter is " <<linecounter<<endl;         
->>>>>>> f7ab48790d28160e560b388957c53e69e59240b4
+    cout<< "The value of the linecounter is " <<linecounter<<endl;
+    */
   }
 }
 
@@ -187,10 +168,7 @@ void trace_instant_global(char* name){
  * Arguments: name of object and pointer to object
 */
 void trace_object_new(char* name, void* obj_pointer){
-  //auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  //auto BeginTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  //auto thetimeN= BeginTime/1000;
   long int thetimeN = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
   if (linecounter== 10000){
     trace_flush();
@@ -211,10 +189,7 @@ void trace_object_new(char* name, void* obj_pointer){
  * Arguments: name of object and pointer to object
 */
 void trace_object_gone(char* name, void* obj_pointer){
-  //auto finish = std::chrono::high_resolution_clock::now();
   std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  //auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  //auto thetimeD= EndTime/1000;
   long int thetimeD = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
   if (linecounter== 10000)
   {
@@ -224,7 +199,6 @@ void trace_object_gone(char* name, void* obj_pointer){
     eventcounter=eventcounter-1;
     if (eventcounter== 0){
         ostringstream oss;
-        //oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
          oss << "{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid() << "\", \"tid\" : \"1\", \"ph\" : \"D\", \"id\" : \""<< obj_pointer << "\", \"ts\" : \""<< thetimeD <<"\" }\n";
         string var = oss.str();
         line[linecounter]=var;
@@ -242,35 +216,25 @@ void trace_object_gone(char* name, void* obj_pointer){
   }
 }
 
-
-<<<<<<< HEAD
-void trace_counter(char* name, char* key, char* value){
-  //auto finish = std::chrono::high_resolution_clock::now();
-  std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
-  //auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  //auto thetimeC= EndTime/1000;
-  long int thetimeC = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-=======
 /**
  * Function: trace_object_snap
  * Arguments: name of object, pointer to object and pointer to future dump file (Type of argument yet to be determined)
+ * you need key and value as well as you want to rpint them out on line 235, also this isn't a part of required functions according to Karol
+ * so why are we doing this lol??
 */
 void trace_object_snap(char* name, void* obj_pointer, void* snap_dump){
   auto finish = std::chrono::high_resolution_clock::now();
   auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
   auto thetimeC= EndTime/1000;
->>>>>>> f7ab48790d28160e560b388957c53e69e59240b4
   if (linecounter== 10000)
   {
     trace_flush();
   }
   else{
     ostringstream oss;
-<<<<<<< HEAD
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid() << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
-=======
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"O\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"snapshot\": {\"" << snap_dump << "\"} },\n";
->>>>>>> f7ab48790d28160e560b388957c53e69e59240b4
+    // it is not possible to add the value of the "key" and "value" in the oss below as key and value are not in the scope of this function.
+    //oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid() << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid() << "\", \"tid\" : \"1\", \"ph\" : \"O\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"snapshot\": {\"" << snap_dump << "\"} },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
@@ -283,20 +247,20 @@ void trace_object_snap(char* name, void* obj_pointer, void* snap_dump){
  * Arguments: name of object, key and value of arguments.
 */
 void trace_counter(char* name, char* key, char* value){
-  auto finish = std::chrono::high_resolution_clock::now();
-  auto EndTime = std::chrono::duration_cast<std::chrono::nanoseconds>(finish-start).count();
-  auto thetimeC= EndTime/1000;
+  std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+  long int thetimeC = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+
   if (linecounter== 10000)
   {
     trace_flush();
   }
   else{
     ostringstream oss;
-    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << to_string(getpid()) << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
+    oss <<"{ \"name\" : \""<< name << "\", \"pid\" : \"" << getpid() << "\", \"tid\" : \"1\", \"ph\" : \"C\", \"ts\" : \""<< thetimeC <<"\",  \"args\" : {\"" << key << "\" : \"" << value << "\"} },\n";
     string var = oss.str();
     line[linecounter]=var;
     linecounter= linecounter +1;
-    cout<< "The value of the linecounter is " <<linecounter<<endl;           
+    cout<< "The value of the linecounter is " <<linecounter<<endl;
   }
 }
 
@@ -329,8 +293,3 @@ void trace_end(){
   file << "]";
   file.close();
 }
-
-
-
-
-
