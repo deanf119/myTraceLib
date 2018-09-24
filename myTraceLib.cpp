@@ -1,7 +1,7 @@
 /**
  * File: myTraceLib.cpp
  * Authors: Dean Fernandes and Sheel Soneji
- * Last Update: September 20th, 2018
+ * Last Update: September 24th, 2018
  * Functionality: To check the trace time for individual processes and threads for another function.
 */
 
