@@ -1,10 +1,13 @@
 [ 
-{ "name" : "Task 1", "cat" : "Task 1", "pid" : "1", "tid" : "1", "ph" : "B", "ts" : "193" },
-{ "name" : "Task 2", "cat" : "Task 2", "pid" : "1", "tid" : "1", "ph" : "B", "ts" : "245" },
-{ "name" : "Task 3", "cat" : "Task 3", "pid" : "1", "tid" : "1", "ph" : "B", "ts" : "257" },
-{ "name" : "Task 4", "cat" : "Task 4", "pid" : "1", "tid" : "1", "ph" : "B", "ts" : "265" },
-{ "pid" : "1", "tid" : "1", "ph" : "E", "ts" : "273" },
-{ "pid" : "1", "tid" : "1", "ph" : "E", "ts" : "283" },
-{ "pid" : "1", "tid" : "1", "ph" : "E", "ts" : "291" },
-{ "pid" : "1", "tid" : "1", "ph" : "E", "ts" : "298" }
+{ "name" : "TaskObject", "pid" : "1594", "tid" : "1", "ph" : "N", "id" : "0x0", "ts" : "458" },
+{ "name" : "Task 1", "cat" : "Task 1", "pid" : "1594", "tid" : "1", "ph" : "B", "ts" : "519" },
+{ "name" : "Task 2", "cat" : "Task 2", "pid" : "1594", "tid" : "1", "ph" : "B", "ts" : "531" },
+{ "name" : "Task 3", "cat" : "Task 3", "pid" : "1594", "tid" : "1", "ph" : "B", "ts" : "541" },
+{ "name" : "Task 4", "cat" : "Task 4", "pid" : "1594", "tid" : "1", "ph" : "B", "ts" : "550" },
+{ "name" : "Task_Instant", "pid" : "1594", "tid" : "1", "ph" : "i", "s" : "g", "ts" : "559" },
+{ "pid" : "1594", "tid" : "1", "ph" : "E", "ts" : "573" },
+{ "pid" : "1594", "tid" : "1", "ph" : "E", "ts" : "585" },
+{ "pid" : "1594", "tid" : "1", "ph" : "E", "ts" : "594" },
+{ "pid" : "1594", "tid" : "1", "ph" : "E", "ts" : "602" },
+{ "name" : "TaskObject", "pid" : "1594", "tid" : "1", "ph" : "D", "id" : "0x0", "ts" : "610" }
 ]
